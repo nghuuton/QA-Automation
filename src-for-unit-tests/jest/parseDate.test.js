@@ -20,7 +20,7 @@ describe("Parse Date Func", () => {
     const result = parseDate(number);
     // Assert
     expect(result).not.toBeNull();
-    expect(result).toEqual(resultCompare);
+    expect(result).toMatchObject(resultCompare);
   });
 
   test("input is a string", () => {
