@@ -29,15 +29,15 @@ describe("Parse Date Func", () => {
     // Run
     const result = parseDate(str, "dd/MMMM/yyyy", new Date()); // * Invalid Date
     // Assert
-    expect(result).not.toMatchObject(new Date());
+    expect(result.toString()).toBe("Invalid Date");
   });
 
   test("input is a string date", () => {
     // Setup
-    const strDate = "2020/19/02"; // "2020-19-02"
+    const strDate = "2020/19/02"; // "2020-19-02" // null // undefined
     // Run
     const result = parseDate(strDate); // * Invalid Date
     // Assert
-    expect(result).not.toMatchObject(new Date());
+    expect(result.toString()).toBe("Invalid Date");
   });
 });
