@@ -8,7 +8,7 @@ function getFirebaseConfig() {
     projectId: process.env.FIREBASE_PROJECT_ID,
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID
+    appId: process.env.FIREBASE_APP_ID,
   };
   if (isRunningInsideFirebase()) {
     // eslint-disable-next-line import/no-unresolved,global-require
@@ -21,7 +21,7 @@ function getFirebaseConfig() {
       apiKey: config.fbase.api_key,
       authDomain: `${runtimeConfig.projectId}.firebaseapp.com`,
       messagingSenderId: config.fbase.message_sender_id,
-      appId: config.fbase.app_id
+      appId: config.fbase.app_id,
     };
   }
   return cfg;
