@@ -12,6 +12,7 @@ const btnToggle = Selector(".toggle");
 const btnToggleAll = Selector("label[for='toggle-all']");
 const btnActive = Selector("a[data-reactid='.0.2.1.2.0']");
 const btnClearCompleted = Selector(".clear-completed");
+const btnCompleted = Selector(".filters").child("li").nth(-1);
 
 test("Add new todo", async (t) => {
   /*
@@ -54,6 +55,28 @@ test("Click Complete Todo && Click Filter Active", async (t) => {
   await t.expect(listTodo.childElementCount).eql(0);
 
   await t.expect(counterTodo.child("strong").innerText).eql("0");
+});
+
+test("Click Complete Todo && Click Filter Completed", async (t) => {
+  for (let i = 0; i < 4; i++) {
+    if (i % 2 === 0) {
+      await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
+      await t.click(listTodo.child("li").nth(i).find("input"));
+    } else {
+      await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
+    }
+  }
+  await t
+    .click(btnCompleted)
+    .expect(counterTodo.child("strong").innerText)
+    .eql("2");
+  await t.expect(listTodo.childElementCount).eql(2);
+  await t
+    .expect(listTodo.child("li").nth(0).find("label").innerText)
+    .eql("Todo 0");
+  await t
+    .expect(listTodo.child("li").nth(1).find("label").innerText)
+    .eql("Todo 2");
 });
 
 test("Click Clear Completed", async (t) => {
