@@ -10,9 +10,10 @@ const listTodo = Selector(".todo-list");
 const counterTodo = Selector(".todo-count");
 const btnToggle = Selector(".toggle");
 const btnToggleAll = Selector("label[for='toggle-all']");
-const btnActive = Selector("a[data-reactid='.0.2.1.2.0']");
-const btnClearCompleted = Selector(".clear-completed");
+const btnAll = Selector(".filters").child("li").nth(0);
+const btnActive = Selector(".filters").child("li").nth(1);
 const btnCompleted = Selector(".filters").child("li").nth(-1);
+const btnClearCompleted = Selector(".clear-completed");
 
 test("Add new todo", async (t) => {
   /*
@@ -66,6 +67,7 @@ test("Click Complete Todo && Click Filter Completed", async (t) => {
       await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
     }
   }
+
   await t
     .click(btnCompleted)
     .expect(counterTodo.child("strong").innerText)
@@ -79,11 +81,23 @@ test("Click Complete Todo && Click Filter Completed", async (t) => {
     .eql("Todo 2");
 });
 
+test("Click All Todo", async (t) => {
+  for (let index = 0; index < 4; index++) {
+    if (index % 2 === 0) {
+      await t.typeText("input.new-todo", `Todo ${index}`).pressKey("enter");
+      await t.click(listTodo.child("li").nth(index).find("input"));
+    } else {
+      await t.typeText("input.new-todo", `Todo ${index}`).pressKey("enter");
+    }
+  }
+  await t.click(btnAll).expect(counterTodo.child("strong").innerText).eql("2");
+  await t.expect(listTodo.childElementCount).eql(4);
+});
+
 test("Click Clear Completed", async (t) => {
-  await t.typeText("input.new-todo", "Todo 1").pressKey("enter");
-  await t.typeText("input.new-todo", "Todo 2").pressKey("enter");
-  await t.typeText("input.new-todo", "Todo 3").pressKey("enter");
-  await t.typeText("input.new-todo", "Todo 4").pressKey("enter");
+  for (let i = 0; i < 4; i++) {
+    await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
+  }
 
   await t.expect(listTodo.childElementCount).eql(4);
   await t.expect(counterTodo.child("strong").innerText).eql("4");
@@ -92,4 +106,31 @@ test("Click Clear Completed", async (t) => {
 
   await t.expect(counterTodo.child("strong").innerText).eql("0");
   await t.click(btnClearCompleted);
+  const main = Selector(".main").exists;
+  const footer = Selector(".footer").exists;
+  await t.expect(main).notOk().expect(footer).notOk();
+});
+
+test("Edit Todo", async (t) => {
+  for (let index = 0; index < 4; index++) {
+    await t.typeText("input.new-todo", `Todo ${index}`).pressKey("enter");
+  }
+
+  await t
+    .doubleClick(listTodo.child("li").nth(0))
+    .pressKey("ctrl+a")
+    .pressKey("delete")
+    .pressKey("enter");
+
+  await t.expect(listTodo.childElementCount).eql(3);
+  await t.expect(counterTodo.child("strong").innerText).eql("3");
+
+  await t
+    .doubleClick(listTodo.child("li").nth(0))
+    .pressKey("backspace+v")
+    .pressKey("enter");
+
+  await t
+    .expect(listTodo.child("li").nth(0).find("label").innerText)
+    .eql("Todo v");
 });
