@@ -15,6 +15,8 @@ const btnActive = Selector(".filters").child("li").nth(1);
 const btnCompleted = Selector(".filters").child("li").nth(-1);
 const btnClearCompleted = Selector(".clear-completed");
 
+const todoElementIndex = (index) => Selector(listTodo.child("li").nth(index));
+
 test("Add new todo", async (t) => {
   /*
    * Type text Hello World, press Enter
@@ -33,36 +35,41 @@ test("Add new todo", async (t) => {
   await t.expect(counterTodo.child("strong").innerText).eql("1");
 });
 
-test("Click Filter Active", async (t) => {
-  await t.typeText("input.new-todo", "Hello World").pressKey("enter");
-  /*
-   * Check number DOM in todolist > 0
-   * */
-  await t.expect(listTodo().childElementCount).gte(0);
-
-  await t
-    .click(btnActive)
-    .expect(listTodo.find("label").innerText)
-    .eql("Hello World");
-});
+// test("Click Filter Active", async (t) => {
+//   await t.typeText("input.new-todo", "Hello World").pressKey("enter");
+//   /*
+//    * Check number DOM in todolist > 0
+//    * */
+//   await t.expect(listTodo().childElementCount).gte(0);
+//
+//   await t
+//     .click(btnActive)
+//     .expect(listTodo.find("label").innerText)
+//     .eql("Hello World");
+// });
 
 test("Click Complete Todo && Click Filter Active", async (t) => {
-  await t
-    .typeText("input.new-todo", "Hello World")
-    .pressKey("enter")
-    .click(btnToggle)
-    .click(btnActive);
+  for (let i = 0; i < 4; i++) {
+    if (i % 2 === 0) {
+      await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
+      await t.click(todoElementIndex(i).find("input"));
+    } else {
+      await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
+    }
+  }
 
-  await t.expect(listTodo.childElementCount).eql(0);
+  await t.click(btnActive).expect(listTodo.childElementCount).eql(2);
 
-  await t.expect(counterTodo.child("strong").innerText).eql("0");
+  await t.expect(counterTodo.child("strong").innerText).eql("2");
+  await t.expect(todoElementIndex(0).find("label").innerText).eql("Todo 1");
+  await t.expect(todoElementIndex(1).find("label").innerText).eql("Todo 3");
 });
 
 test("Click Complete Todo && Click Filter Completed", async (t) => {
   for (let i = 0; i < 4; i++) {
     if (i % 2 === 0) {
       await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
-      await t.click(listTodo.child("li").nth(i).find("input"));
+      await t.click(todoElementIndex(i).find("input"));
     } else {
       await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
     }
@@ -72,20 +79,17 @@ test("Click Complete Todo && Click Filter Completed", async (t) => {
     .click(btnCompleted)
     .expect(counterTodo.child("strong").innerText)
     .eql("2");
+
   await t.expect(listTodo.childElementCount).eql(2);
-  await t
-    .expect(listTodo.child("li").nth(0).find("label").innerText)
-    .eql("Todo 0");
-  await t
-    .expect(listTodo.child("li").nth(1).find("label").innerText)
-    .eql("Todo 2");
+  await t.expect(todoElementIndex(0).find("label").innerText).eql("Todo 0");
+  await t.expect(todoElementIndex(1).find("label").innerText).eql("Todo 2");
 });
 
 test("Click All Todo", async (t) => {
   for (let index = 0; index < 4; index++) {
     if (index % 2 === 0) {
       await t.typeText("input.new-todo", `Todo ${index}`).pressKey("enter");
-      await t.click(listTodo.child("li").nth(index).find("input"));
+      await t.click(todoElementIndex(index).find("input"));
     } else {
       await t.typeText("input.new-todo", `Todo ${index}`).pressKey("enter");
     }
@@ -117,7 +121,7 @@ test("Edit Todo", async (t) => {
   }
 
   await t
-    .doubleClick(listTodo.child("li").nth(0))
+    .doubleClick(todoElementIndex(0))
     .pressKey("ctrl+a")
     .pressKey("delete")
     .pressKey("enter");
@@ -126,11 +130,28 @@ test("Edit Todo", async (t) => {
   await t.expect(counterTodo.child("strong").innerText).eql("3");
 
   await t
-    .doubleClick(listTodo.child("li").nth(0))
-    .pressKey("backspace+v")
-    .pressKey("enter");
+    .doubleClick(todoElementIndex(0))
+    .pressKey("backspace")
+    .typeText(todoElementIndex(0).find("input.edit"), "ver(1.0)")
+    .pressKey("enter")
+    .expect(todoElementIndex(0).find("label").innerText)
+    .eql("Todo ver(1.0)");
+});
+
+test("Remove Todo", async (t) => {
+  for (let index = 0; index < 4; index++) {
+    await t.typeText("input.new-todo", `Todo ${index}`).pressKey("enter");
+  }
 
   await t
-    .expect(listTodo.child("li").nth(0).find("label").innerText)
-    .eql("Todo v");
+    .hover(todoElementIndex(0))
+    .click(todoElementIndex(0).find("button.destroy"))
+    .expect(listTodo.childElementCount)
+    .eql(3);
+
+  await t
+    .hover(todoElementIndex(2))
+    .click(todoElementIndex(2).find("button.destroy"))
+    .expect(listTodo.childElementCount)
+    .eql(2);
 });
