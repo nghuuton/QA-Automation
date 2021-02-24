@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "test": "jest --coverage --watchAll",
-    "test-e2e": "testcafe chrome ./testcafe/**.test.js --speed 0.5",
-    "test-e2e:headless": "testcafe chrome:headless ./testcafe/**.test.js"
+    "test-e2e": "testcafe chrome ./testcafe/**.e2e.js --speed 0.5",
+    "test-e2e:headless": "testcafe chrome:headless ./testcafe/**.e2e.js"
   },
   "dependencies": {
     "date-fns": "^2.17.0",

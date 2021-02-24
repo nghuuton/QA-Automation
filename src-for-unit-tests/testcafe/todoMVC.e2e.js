@@ -8,7 +8,6 @@ fixture("todoMVC React").page("https://todomvc.com/examples/react/");
 
 const listTodo = Selector(".todo-list");
 const counterTodo = Selector(".todo-count");
-const btnToggle = Selector(".toggle");
 const btnToggleAll = Selector("label[for='toggle-all']");
 const btnAll = Selector(".filters").child("li").nth(0);
 const btnActive = Selector(".filters").child("li").nth(1);
@@ -51,10 +50,18 @@ test("Add new todo", async (t) => {
 test("Click Complete Todo && Click Filter Active", async (t) => {
   for (let i = 0; i < 4; i++) {
     if (i % 2 === 0) {
-      await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
+      await t
+        .typeText("input.new-todo", `Todo ${i}`)
+        .pressKey("enter")
+        .expect(todoElementIndex(i).find("label").innerText)
+        .eql(`Todo ${i}`);
       await t.click(todoElementIndex(i).find("input"));
     } else {
-      await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
+      await t
+        .typeText("input.new-todo", `Todo ${i}`)
+        .pressKey("enter")
+        .expect(todoElementIndex(i).find("label").innerText)
+        .eql(`Todo ${i}`);
     }
   }
 
@@ -68,10 +75,18 @@ test("Click Complete Todo && Click Filter Active", async (t) => {
 test("Click Complete Todo && Click Filter Completed", async (t) => {
   for (let i = 0; i < 4; i++) {
     if (i % 2 === 0) {
-      await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
+      await t
+        .typeText("input.new-todo", `Todo ${i}`)
+        .pressKey("enter")
+        .expect(todoElementIndex(i).find("label").innerText)
+        .eql(`Todo ${i}`);
       await t.click(todoElementIndex(i).find("input"));
     } else {
-      await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
+      await t
+        .typeText("input.new-todo", `Todo ${i}`)
+        .pressKey("enter")
+        .expect(todoElementIndex(i).find("label").innerText)
+        .eql(`Todo ${i}`);
     }
   }
 
@@ -88,10 +103,18 @@ test("Click Complete Todo && Click Filter Completed", async (t) => {
 test("Click All Todo", async (t) => {
   for (let index = 0; index < 4; index++) {
     if (index % 2 === 0) {
-      await t.typeText("input.new-todo", `Todo ${index}`).pressKey("enter");
+      await t
+        .typeText("input.new-todo", `Todo ${index}`)
+        .pressKey("enter")
+        .expect(todoElementIndex(index).find("label").innerText)
+        .eql(`Todo ${index}`);
       await t.click(todoElementIndex(index).find("input"));
     } else {
-      await t.typeText("input.new-todo", `Todo ${index}`).pressKey("enter");
+      await t
+        .typeText("input.new-todo", `Todo ${index}`)
+        .pressKey("enter")
+        .expect(todoElementIndex(index).find("label").innerText)
+        .eql(`Todo ${index}`);
     }
   }
   await t.click(btnAll).expect(counterTodo.child("strong").innerText).eql("2");
@@ -100,7 +123,11 @@ test("Click All Todo", async (t) => {
 
 test("Click Clear Completed", async (t) => {
   for (let i = 0; i < 4; i++) {
-    await t.typeText("input.new-todo", `Todo ${i}`).pressKey("enter");
+    await t
+      .typeText("input.new-todo", `Todo ${i}`)
+      .pressKey("enter")
+      .expect(todoElementIndex(i).find("label").innerText)
+      .eql(`Todo ${i}`);
   }
 
   await t.expect(listTodo.childElementCount).eql(4);
@@ -117,7 +144,11 @@ test("Click Clear Completed", async (t) => {
 
 test("Edit Todo", async (t) => {
   for (let index = 0; index < 4; index++) {
-    await t.typeText("input.new-todo", `Todo ${index}`).pressKey("enter");
+    await t
+      .typeText("input.new-todo", `Todo ${index}`)
+      .pressKey("enter")
+      .expect(todoElementIndex(index).find("label").innerText)
+      .eql(`Todo ${index}`);
   }
 
   await t
@@ -140,7 +171,11 @@ test("Edit Todo", async (t) => {
 
 test("Remove Todo", async (t) => {
   for (let index = 0; index < 4; index++) {
-    await t.typeText("input.new-todo", `Todo ${index}`).pressKey("enter");
+    await t
+      .typeText("input.new-todo", `Todo ${index}`)
+      .pressKey("enter")
+      .expect(todoElementIndex(index).find("label").innerText)
+      .eql(`Todo ${index}`);
   }
 
   await t
